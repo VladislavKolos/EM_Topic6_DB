@@ -1,0 +1,28 @@
+services:
+  postgres_demo:
+    image: postgres:15-alpine
+    container_name: postgres_demo
+    restart: always
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: ${DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  demo_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo_app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - postgres_demo
+
+volumes:
+  pgdata:
